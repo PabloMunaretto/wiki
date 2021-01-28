@@ -11,7 +11,7 @@ router.get('/', (req, res, next) => {
     
 })
 router.post('/', (req, res, next) => {
-    console.log(req.body.name, req.body.email, req.body)
+    console.log(req.body.content, req.body.title)
 
     let nombre = req.body.name
     let email = req.body.email
@@ -24,7 +24,10 @@ router.post('/', (req, res, next) => {
     })
     .then(() => res.send('Página Wiki creada'))
     .then(() => res.redirect('/'))
-    .catch(err => console.log(err))
+    .catch(err => {
+        console.log(err)
+        res.send('No se creo la pagina')
+    })
 
     // User.create({
     //     name: nombre,
