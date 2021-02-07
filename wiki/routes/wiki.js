@@ -1,47 +1,62 @@
 const express = require('express');
 const router = express.Router();
-
-const { User, Page } = require('../models');
+const { Page, User } = require('../models');
 
 
 router.get('/', (req, res, next) => {
    
-    res.render('addpage');
+    Page.findAll()
+        .then(page => {
+            res.render('index', { pages: page});
+        })
+         
     //trae todas las páginas de wiki
-    
 })
 router.post('/', (req, res, next) => {
-    console.log(req.body.content, req.body.title)
 
-    let nombre = req.body.name
-    let email = req.body.email
-    let titulo = req.body.title
-    let contenido = req.body.content
-
-    Page.create({
-        title: titulo,
-        content: contenido,
+    User.findOrCreate({ // devuelve un array
+        where: {
+            name: req.body.name,
+            email: req.body.email
+        }
     })
-    .then(() => res.send('Página Wiki creada'))
-    .then(() => res.redirect('/'))
-    .catch(err => {
-        console.log(err)
-        res.send('No se creo la pagina')
-    })
-
-    // User.create({
-    //     name: nombre,
-    //     email: email,
-    // })
-    // .then(() => res.send('Se creó el Usuario'))
-    // .catch(() => console.log(err))
-
+        .then(data => {
+            const user = data[0]; // en [0] se encuentra el usuario
+            Page.create({
+                title: req.body.title,
+                content: req.body.content,
+                status: req.body.status
+            })
+                .then(page => page.setAuthor(user))
+                .then(page => res.redirect("/"))
+            
+        })
        
     //submitea una página a la base de datos
 })
 router.get('/add', (req, res, next) => {
     res.render('addpage');
     //trae el formulario de "agregá una página"
+})
+
+router.get('/:urlTitle', (req, res, next) => {
+    
+    Page.findOne({
+        where: {
+            urltitle : req.params.urlTitle
+        }
+    })
+    .then(paginaEncontrada => {
+            paginaEncontrada.getAuthor()
+                .then(author => {
+                    return res.render('wikipage', {
+                        page: paginaEncontrada,
+                        author: author
+                    })
+                })
+    })
+
+    
 })
 
 module.exports = router;

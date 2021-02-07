@@ -9,9 +9,6 @@ const { User, Page } = require('../models');
 
 router.use("/user", user)
 router.use("/wiki", wiki)
+router.use("/", wiki)
 
-router.get('/', (req, res, next) => {
-   
-    res.render('index');
-})
 module.exports = router;

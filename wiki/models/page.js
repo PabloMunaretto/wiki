@@ -10,7 +10,7 @@ Page.init({
   },
   urltitle: {
     type: S.STRING,
-    allowNull: false,
+    allowNull: false,  
   },
   content: {
     type: S.TEXT,
@@ -26,25 +26,20 @@ Page.init({
   route: {
       type: S.VIRTUAL,
       get() {
-        const url = this.getDataValue(urltitle);
-        return url ? '/wiki/'+url : null;
+        return `/wiki/${this.getDataValue('urltitle')}`;
       }
-  }
+  },
 }, { sequelize: db, modelName: 'page' });
 
 
-Page.beforeValidate((title) => {
+Page.beforeValidate((page, options) => {
+  
+    if (page.title) {
+      page.urltitle =  page.title.replace(/\s+/g, '_').replace(/\W/g, '');
+      options.fields.push('urltitle')
+    }
+})
 
-  if (title) {
-    // Remueve todos los caracteres no-alfanuméricos 
-    // y hace a los espacios guiones bajos. 
-    this.urltitle = title.replace(/\s+/g, '_').replace(/\W/g, '');
-  } else {
-    // Generá de forma aleatoria un string de 5 caracteres
-    this.urltitle = Math.random().toString(36).substring(2, 7);
-  }
-
-});
 
 module.exports = {
     Page: Page,

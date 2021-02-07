@@ -12,7 +12,8 @@
     "nunjucks-autoescape": "^1.0.1",
     "pg": "^8.5.1",
     "pg-hstore": "^2.3.3",
-    "sequelize": "^6.5.0"
+    "sequelize": "^6.5.0",
+    "volleyball": "^1.5.1"
   },
   "devDependencies": {},
   "scripts": {
